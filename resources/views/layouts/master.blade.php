@@ -9,23 +9,18 @@
 
     {{-- Titre de l'onglet : chaque page définit sa section "title" --}}
     <title>@yield('title') - MCB Bank</title>
-    <link rel="shortcut icon" href="{{ asset('frontend/images/logo.png') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/images/logo.png') }}">
 
     {{-- CSS : Bootstrap, styles du template et icônes Font Awesome --}}
-    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/css/custom.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('frontend/font-awesome/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}">
 
     {{-- JS : jQuery, Popper et Bootstrap (nécessaires pour le menu, les modals et le carousel) --}}
-    <script src="{{ asset('frontend/js/jquery-3.2.1.min.js') }}"></script>
-    <script src="{{ asset('frontend/js/popper.min.js') }}"></script>
-    <script src="{{ asset('frontend/js/bootstrap.min.js') }}"></script>
-    <script type="text/javascript">
-        // active les infobulles (tooltips) de Bootstrap
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        });
-    </script>
+    <script src="{{ asset('assets/js/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ asset('assets/js/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/app.js') }}"></script>
 </head>
 
 {{-- Le fond peut être changé par une page (ex : la page de connexion) --}}

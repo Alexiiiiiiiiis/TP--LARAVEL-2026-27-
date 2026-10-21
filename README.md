@@ -55,7 +55,7 @@ TP-Laravel-2026-27/
 │   └── seeders/
 │       └── DatabaseSeeder.php             # données de démonstration
 ├── public/
-│   └── frontend/                          # assets du template
+│   └── assets/                            # assets du front (css, js, images, fonts)
 │       ├── css/                           # bootstrap + custom.css
 │       ├── js/                            # jquery, popper, bootstrap
 │       ├── font-awesome/                  # icônes

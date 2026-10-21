@@ -22,13 +22,13 @@
         <div id="carouselExampleIndicators" class="carousel slide my-2 rounded-1 shadowBlack" data-ride="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img class="d-block w-100" src="{{ asset('frontend/images/1.jpg') }}" alt="First slide" style="max-height: 250px">
+                    <img class="d-block w-100" src="{{ asset('assets/images/1.jpg') }}" alt="First slide" style="max-height: 250px">
                 </div>
                 <div class="carousel-item">
-                    <img class="d-block w-100" src="{{ asset('frontend/images/2.jpg') }}" alt="Second slide" style="max-height: 250px">
+                    <img class="d-block w-100" src="{{ asset('assets/images/2.jpg') }}" alt="Second slide" style="max-height: 250px">
                 </div>
                 <div class="carousel-item">
-                    <img class="d-block w-100" src="{{ asset('frontend/images/3.jpg') }}" alt="Third slide" style="max-height: 250px">
+                    <img class="d-block w-100" src="{{ asset('assets/images/3.jpg') }}" alt="Third slide" style="max-height: 250px">
                 </div>
             </div>
             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -47,7 +47,7 @@
         <div class="row" style="padding: 22px;padding-top: 0">
             <div class="col">
                 <div class="card shadowBlack">
-                    <img class="card-img-top" src="{{ asset('frontend/images/acount.jpg') }}" style="max-height: 155px;min-height: 155px" alt="">
+                    <img class="card-img-top" src="{{ asset('assets/images/acount.jpg') }}" style="max-height: 155px;min-height: 155px" alt="">
                     <div class="card-body">
                         <a href="{{ url('/accounts') }}" class="btn btn-outline-success btn-block">Account Summary</a>
                     </div>
@@ -55,7 +55,7 @@
             </div>
             <div class="col">
                 <div class="card shadowBlack">
-                    <img class="card-img-top" src="{{ asset('frontend/images/transfer.jpg') }}" alt="" style="max-height: 155px;min-height: 155px">
+                    <img class="card-img-top" src="{{ asset('assets/images/transfer.jpg') }}" alt="" style="max-height: 155px;min-height: 155px">
                     <div class="card-body">
                         <a href="{{ url('/transfer') }}" class="btn btn-outline-success btn-block">Transfer Money</a>
                     </div>
@@ -65,7 +65,7 @@
         <div class="row" style="padding: 22px">
             <div class="col">
                 <div class="card shadowBlack">
-                    <img class="card-img-top" src="{{ asset('frontend/images/bell.gif') }}" style="max-height: 155px;min-height: 155px" alt="">
+                    <img class="card-img-top" src="{{ asset('assets/images/bell.gif') }}" style="max-height: 155px;min-height: 155px" alt="">
                     <div class="card-body">
                         <a href="{{ url('/notice') }}" class="btn btn-outline-primary btn-block">Check Notification</a>
                     </div>
@@ -73,7 +73,7 @@
             </div>
             <div class="col">
                 <div class="card shadowBlack">
-                    <img class="card-img-top" src="{{ asset('frontend/images/contacts.gif') }}" alt="" style="max-height: 155px;min-height: 155px">
+                    <img class="card-img-top" src="{{ asset('assets/images/contacts.gif') }}" alt="" style="max-height: 155px;min-height: 155px">
                     <div class="card-body">
                         <a href="{{ url('/feedback') }}" class="btn btn-outline-primary btn-block">Contact Us</a>
                     </div>

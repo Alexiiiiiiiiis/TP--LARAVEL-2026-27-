@@ -65,9 +65,9 @@ class DatabaseSeeder extends Seeder
     private function account(string $name, string $email, string $password, string $accountNo, string $type, float $balance, Branch $branch, string $image): Account
     {
         // copie la photo du template dans le dossier des photos clients
-        $source = public_path('frontend/images/'.$image);
+        $source = public_path('assets/images/'.$image);
         if (file_exists($source)) {
-            copy($source, public_path('frontend/images/clients/'.$image));
+            copy($source, public_path('assets/images/clients/'.$image));
         }
 
         $account = new Account();

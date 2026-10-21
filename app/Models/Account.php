@@ -36,7 +36,7 @@ class Account extends Model
     public function photo()
     {
         return $this->image
-            ? asset('frontend/images/clients/'.$this->image)
-            : asset('frontend/images/hillary.jpg');
+            ? asset('assets/images/clients/'.$this->image)
+            : asset('assets/images/hillary.jpg');
     }
 }

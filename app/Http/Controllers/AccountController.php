@@ -30,12 +30,12 @@ class AccountController extends Controller
             'image' => 'nullable|image|max:1999',
         ]);
 
-        // enregistrement de la photo dans public/frontend/images/clients
+        // enregistrement de la photo dans public/assets/images/clients
         $fileNameToStore = null;
         if ($request->hasFile('image')) {
             $ext = $request->file('image')->extension();
             $fileNameToStore = 'client_'.time().'_'.uniqid().'.'.$ext;
-            $request->file('image')->move(public_path('frontend/images/clients'), $fileNameToStore);
+            $request->file('image')->move(public_path('assets/images/clients'), $fileNameToStore);
         }
 
         DB::transaction(function () use ($request, $fileNameToStore) {
@@ -80,7 +80,7 @@ class AccountController extends Controller
 
         // suppression de la photo du client
         if ($account->image) {
-            File::delete(public_path('frontend/images/clients/'.$account->image));
+            File::delete(public_path('assets/images/clients/'.$account->image));
         }
 
         // les opérations, feedbacks et notifications sont supprimés en cascade

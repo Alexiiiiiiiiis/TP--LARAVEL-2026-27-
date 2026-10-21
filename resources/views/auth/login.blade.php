@@ -4,7 +4,7 @@
 
 @section('title', 'Login')
 
-@section('body_style', "background: url(".asset('frontend/images/bg-login2.jpg').");background-size: 100%")
+@section('body_style', "background: url(".asset('assets/images/bg-login2.jpg').");background-size: 100%")
 
 @section('contenu')
 <h1 class="alert alert-success rounded-0">MCB Bank<small class="float-right text-muted" style="font-size: 12pt;"><kbd>Online Banking</kbd></small></h1>
