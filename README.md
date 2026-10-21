@@ -1,58 +1,117 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# MCB Bank – Arborescence de l'application
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Site de banque en ligne réalisé avec Laravel et Blade, à partir des templates fournis.
+Trois espaces : **client**, **manager**, **caissier**.
 
-## About Laravel
+## Lancer le projet
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```sh
+php artisan migrate:fresh --seed   # crée les tables + données de démonstration
+php artisan serve                  # http://localhost:8000
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+| Rôle     | Email                 | Mot de passe |
+|----------|-----------------------|--------------|
+| Client   | ali@mcbbank.com       | ali          |
+| Manager  | manager@mcbbank.com   | manager      |
+| Caissier | cashier@mcbbank.com   | cashier      |
 
-## Contributing
+## Arborescence (fichiers créés ou modifiés pour le TP)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```
+TP-Laravel-2026-27/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── AuthController.php         # connexion / déconnexion (3 rôles)
+│   │   │   ├── ClientController.php       # pages client : accueil, compte, relevé, notifications, feedback
+│   │   │   ├── TransferController.php     # transfert de fonds entre comptes
+│   │   │   ├── FeedbackController.php     # envoi (client) et suppression (manager) des feedbacks
+│   │   │   ├── ManagerController.php      # pages manager : comptes, caissiers, nouveau compte, feedbacks
+│   │   │   ├── AccountController.php      # création, détails et suppression d'un compte client
+│   │   │   ├── StaffController.php        # CRUD des caissiers
+│   │   │   ├── NoticeController.php       # notifications envoyées par le manager à un client
+│   │   │   └── CashierController.php      # espace caissier : recherche de compte, dépôt, retrait
+│   │   └── Middleware/
+│   │       └── CheckRole.php              # protège chaque espace selon le rôle connecté
+│   └── Models/
+│       ├── Account.php                    # compte bancaire d'un client
+│       ├── Branch.php                     # agence
+│       ├── Staff.php                      # manager / caissier
+│       ├── Transaction.php                # opération (dépôt, retrait, virement)
+│       ├── Feedback.php                   # message d'un client
+│       └── Notice.php                     # notification de la banque
+├── bootstrap/
+│   └── app.php                            # enregistrement du middleware "role"
+├── database/
+│   ├── database.sqlite                    # base de données SQLite
+│   ├── migrations/
+│   │   ├── 2026_10_21_100000_create_branches_table.php
+│   │   ├── 2026_10_21_100001_create_accounts_table.php
+│   │   ├── 2026_10_21_100002_create_staff_table.php
+│   │   ├── 2026_10_21_100003_create_transactions_table.php
+│   │   ├── 2026_10_21_100004_create_feedbacks_table.php
+│   │   └── 2026_10_21_100005_create_notices_table.php
+│   └── seeders/
+│       └── DatabaseSeeder.php             # données de démonstration
+├── public/
+│   └── frontend/                          # assets du template
+│       ├── css/                           # bootstrap + custom.css
+│       ├── js/                            # jquery, popper, bootstrap
+│       ├── font-awesome/                  # icônes
+│       └── images/
+│           └── clients/                   # photos des clients (upload)
+├── resources/
+│   └── views/
+│       ├── layouts/
+│       │   ├── master.blade.php           # structure HTML commune (head, css, js)
+│       │   ├── client.blade.php           # master + navbar client
+│       │   ├── manager.blade.php          # master + navbar manager
+│       │   ├── cashier.blade.php          # master + navbar caissier
+│       │   └── partials/
+│       │       ├── navbar_client.blade.php
+│       │       ├── navbar_manager.blade.php
+│       │       ├── navbar_cashier.blade.php
+│       │       └── alerts.blade.php       # messages de succès / d'erreur
+│       ├── auth/
+│       │   └── login.blade.php            # login.html
+│       ├── client/
+│       │   ├── home.blade.php             # index.html
+│       │   ├── accounts.blade.php         # accounts.html   – détails du compte bancaire
+│       │   ├── statements.blade.php       # statements.html – relevé bancaire
+│       │   ├── transfer.blade.php         # transfer.html   – transfert (étape 1)
+│       │   ├── transferconfirm.blade.php  # transfe.html    – transfert (étape 2)
+│       │   ├── notice.blade.php           # notice.html
+│       │   ├── feedback.blade.php         # feedback.html   – note de feedback
+│       │   └── partials/
+│       │       └── transferhistory.blade.php
+│       ├── manager/
+│       │   ├── home.blade.php             # mindex.html     – liste + suppression des comptes
+│       │   ├── staff.blade.php            # maccounts.html  – CRUD caissiers
+│       │   ├── addaccount.blade.php       # maddnew.html    – création de compte bancaire
+│       │   ├── show.blade.php             # mshow.html      – détails du client
+│       │   ├── notice.blade.php           # mnotice.html
+│       │   └── feedback.blade.php         # mfeedback.html  – suppression de feedback
+│       └── cashier/
+│           ├── home.blade.php             # cindex.html
+│           └── account.blade.php          # cindex1.html    – dépôt / retrait
+└── routes/
+    └── web.php                            # toutes les routes du site
+```
 
-## Code of Conduct
+## Fonctionnalités demandées → où les trouver
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Fonctionnalité                  | Route                                           | Contrôleur                         |
+|---------------------------------|-------------------------------------------------|------------------------------------|
+| Caissier (CRUD)                 | `/manager/staff` (+ save / update / delete)     | `StaffController`                  |
+| Création de compte bancaire     | `/manager/addaccount` → `/manager/saveaccount`  | `AccountController@saveaccount`    |
+| Afficher les détails du client  | `/manager/showaccount/{id}`                     | `AccountController@showaccount`    |
+| Supprimer le compte client      | `DELETE /manager/deleteaccount/{id}`            | `AccountController@deleteaccount`  |
+| Note de feedback de la banque   | `/feedback` → `/savefeedback`                   | `FeedbackController@savefeedback`  |
+| Connexion du compte             | `/login`                                        | `AuthController@login`             |
+| Suppression de feedback         | `DELETE /manager/deletefeedback/{id}`           | `FeedbackController@deletefeedback`|
+| Détails du compte bancaire      | `/accounts`                                     | `ClientController@accounts`        |
+| Transfert de fonds              | `/transfer` → `/transfer/search` → `/transfer/send` | `TransferController`           |
+| Relevé bancaire                 | `/statements`                                   | `ClientController@statements`      |
+| Dépôt / retrait (caissier)      | `/cashier` → `/cashier/account/{id}`            | `CashierController`                |
+| Notifications                   | `/manager/notice/{id}` → `/notice`              | `NoticeController`                 |
