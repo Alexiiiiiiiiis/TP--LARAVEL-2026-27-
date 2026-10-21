@@ -1,0 +1,24 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+// Table des agences bancaires (nom + code de l'agence)
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('branches', function (Blueprint $table) {
+            $table->id();
+            $table->string('branch_name');
+            $table->string('branch_code');
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('branches');
+    }
+};
