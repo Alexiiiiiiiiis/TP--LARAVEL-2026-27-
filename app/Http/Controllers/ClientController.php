@@ -2,22 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
+use Illuminate\Support\Facades\DB;
 
 // Pages de l'espace client
 class ClientController extends Controller
 {
-    // compte du client connecté
+    // compte du client connecté, avec le nom et le code de son agence
     private function account()
     {
-        return Account::with('branch')->findOrFail(session('user_id'));
+        return DB::table('accounts')
+            ->join('branches', 'accounts.branch_id', '=', 'branches.id')
+            ->select('accounts.*', 'branches.branch_name', 'branches.branch_code')
+            ->where('accounts.id', session('user_id'))
+            ->firstOrFail();
     }
 
     // accueil : affiche la dernière notification reçue
     public function home()
     {
         $account = $this->account();
-        $lastNotice = $account->notices()->latest()->first();
+        $lastNotice = DB::table('notices')->where('account_id', $account->id)->latest()->first();
 
         return view('client.home')->with('account', $account)->with('lastNotice', $lastNotice);
     }
@@ -32,7 +36,7 @@ class ClientController extends Controller
     public function statements()
     {
         $account = $this->account();
-        $transactions = $account->transactions()->latest()->get();
+        $transactions = DB::table('transactions')->where('account_id', $account->id)->latest()->get();
 
         return view('client.statements')->with('account', $account)->with('transactions', $transactions);
     }
@@ -41,7 +45,7 @@ class ClientController extends Controller
     public function notice()
     {
         $account = $this->account();
-        $notices = $account->notices()->latest()->get();
+        $notices = DB::table('notices')->where('account_id', $account->id)->latest()->get();
 
         return view('client.notice')->with('account', $account)->with('notices', $notices);
     }

@@ -33,7 +33,7 @@
                             <th scope="row">{{ $loop->iteration }}</th>
                             <td>{{ $account->name }}</td>
                             <td>{{ $account->account_no }}</td>
-                            <td>{{ $account->branch->branch_name }}</td>
+                            <td>{{ $account->branch_name }}</td>
                             <td>Rs.{{ number_format($account->balance, 2) }}</td>
                             <td>{{ ucfirst($account->account_type) }}</td>
                             <td>{{ $account->contact }}</td>

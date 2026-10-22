@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
-use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -12,13 +10,17 @@ class TransferController extends Controller
 {
     private function account()
     {
-        return Account::findOrFail(session('user_id'));
+        return DB::table('accounts')->where('id', session('user_id'))->firstOrFail();
     }
 
     // historique des virements envoyés par le client
-    private function history(Account $account)
+    private function history($account)
     {
-        return $account->transactions()->where('action', 'transfer')->latest()->get();
+        return DB::table('transactions')
+            ->where('account_id', $account->id)
+            ->where('action', 'transfer')
+            ->latest()
+            ->get();
     }
 
     // étape 1 : saisie du numéro de compte du destinataire
@@ -35,7 +37,7 @@ class TransferController extends Controller
         $request->validate(['otherNo' => 'required']);
 
         $account = $this->account();
-        $receiver = Account::where('account_no', $request->input('otherNo'))->first();
+        $receiver = DB::table('accounts')->where('account_no', $request->input('otherNo'))->first();
 
         if (! $receiver) {
             return redirect('/transfer')->with('error', 'Aucun compte trouvé avec ce numéro');
@@ -59,7 +61,7 @@ class TransferController extends Controller
         ]);
 
         $account = $this->account();
-        $receiver = Account::where('account_no', $request->input('otherNo'))->first();
+        $receiver = DB::table('accounts')->where('account_no', $request->input('otherNo'))->first();
         $amount = $request->input('amount');
 
         if ($receiver->id === $account->id) {
@@ -69,26 +71,36 @@ class TransferController extends Controller
         // tout se fait dans une transaction SQL : soit tout passe, soit rien
         $ok = DB::transaction(function () use ($account, $receiver, $amount) {
             // on ne débite que si le solde est suffisant
-            $debited = Account::where('id', $account->id)->where('balance', '>=', $amount)->decrement('balance', $amount);
+            $debited = DB::table('accounts')
+                ->where('id', $account->id)
+                ->where('balance', '>=', $amount)
+                ->decrement('balance', $amount);
             if (! $debited) {
                 return false;
             }
-            Account::where('id', $receiver->id)->increment('balance', $amount);
+            DB::table('accounts')->where('id', $receiver->id)->increment('balance', $amount);
 
             // une ligne dans le relevé de chacun des deux comptes
-            $out = new Transaction();
-            $out->account_id = $account->id;
-            $out->action = 'transfer';
-            $out->debit = $amount;
-            $out->other = $receiver->account_no;
-            $out->save();
-
-            $in = new Transaction();
-            $in->account_id = $receiver->id;
-            $in->action = 'received';
-            $in->credit = $amount;
-            $in->other = $account->account_no;
-            $in->save();
+            DB::table('transactions')->insert([
+                [
+                    'account_id' => $account->id,
+                    'action' => 'transfer',
+                    'debit' => $amount,
+                    'credit' => null,
+                    'other' => $receiver->account_no,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                [
+                    'account_id' => $receiver->id,
+                    'action' => 'received',
+                    'debit' => null,
+                    'credit' => $amount,
+                    'other' => $account->account_no,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+            ]);
 
             return true;
         });

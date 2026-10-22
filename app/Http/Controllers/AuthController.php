@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
-use App\Models\Staff;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 // Connexion des 3 types d'utilisateurs : client, manager, caissier
@@ -29,9 +28,9 @@ class AuthController extends Controller
         // un client se connecte avec son compte bancaire,
         // le manager et les caissiers avec un compte du personnel
         if ($type === 'client') {
-            $user = Account::where('email', $request->input('email'))->first();
+            $user = DB::table('accounts')->where('email', $request->input('email'))->first();
         } else {
-            $user = Staff::where('email', $request->input('email'))->where('role', $type)->first();
+            $user = DB::table('staff')->where('email', $request->input('email'))->where('role', $type)->first();
         }
 
         if (! $user || ! Hash::check($request->input('password'), $user->password)) {

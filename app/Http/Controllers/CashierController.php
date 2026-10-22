@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
-use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +17,7 @@ class CashierController extends Controller
     public function searchaccount(Request $request)
     {
         $request->validate(['otherNo' => 'required']);
-        $account = Account::where('account_no', $request->input('otherNo'))->first();
+        $account = DB::table('accounts')->where('account_no', $request->input('otherNo'))->first();
 
         if (! $account) {
             return back()->with('error', 'Aucun compte trouvé avec ce numéro');
@@ -31,7 +29,7 @@ class CashierController extends Controller
     // informations du compte + formulaires de dépôt / retrait
     public function account($id)
     {
-        $account = Account::findOrFail($id);
+        $account = DB::table('accounts')->where('id', $id)->firstOrFail();
 
         return view('cashier.account')->with('account', $account);
     }
@@ -39,21 +37,26 @@ class CashierController extends Controller
     public function withdraw($id, Request $request)
     {
         $request->validate(['amount' => 'required|numeric|min:1']);
-        $account = Account::findOrFail($id);
+        $account = DB::table('accounts')->where('id', $id)->firstOrFail();
         $amount = $request->input('amount');
 
         $ok = DB::transaction(function () use ($account, $amount) {
             // retrait seulement si le solde est suffisant
-            $debited = Account::where('id', $account->id)->where('balance', '>=', $amount)->decrement('balance', $amount);
+            $debited = DB::table('accounts')
+                ->where('id', $account->id)
+                ->where('balance', '>=', $amount)
+                ->decrement('balance', $amount);
             if (! $debited) {
                 return false;
             }
 
-            $transaction = new Transaction();
-            $transaction->account_id = $account->id;
-            $transaction->action = 'withdraw';
-            $transaction->debit = $amount;
-            $transaction->save();
+            DB::table('transactions')->insert([
+                'account_id' => $account->id,
+                'action' => 'withdraw',
+                'debit' => $amount,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
             return true;
         });
@@ -68,17 +71,19 @@ class CashierController extends Controller
     public function deposit($id, Request $request)
     {
         $request->validate(['amount' => 'required|numeric|min:1']);
-        $account = Account::findOrFail($id);
+        $account = DB::table('accounts')->where('id', $id)->firstOrFail();
         $amount = $request->input('amount');
 
         DB::transaction(function () use ($account, $amount) {
-            Account::where('id', $account->id)->increment('balance', $amount);
+            DB::table('accounts')->where('id', $account->id)->increment('balance', $amount);
 
-            $transaction = new Transaction();
-            $transaction->account_id = $account->id;
-            $transaction->action = 'deposit';
-            $transaction->credit = $amount;
-            $transaction->save();
+            DB::table('transactions')->insert([
+                'account_id' => $account->id,
+                'action' => 'deposit',
+                'credit' => $amount,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         });
 
         return back()->with('status', 'Dépôt de Rs.'.$amount.' effectué avec succès');

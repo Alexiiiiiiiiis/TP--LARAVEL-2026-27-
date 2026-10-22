@@ -26,9 +26,9 @@
                 <tbody>
                     @forelse ($feedbacks as $feedback)
                         <tr>
-                            <td>{{ $feedback->account->name }}</td>
-                            <td>{{ $feedback->account->account_no }}</td>
-                            <td>{{ $feedback->account->contact }}</td>
+                            <td>{{ $feedback->name }}</td>
+                            <td>{{ $feedback->account_no }}</td>
+                            <td>{{ $feedback->contact }}</td>
                             <td>{{ $feedback->message }}</td>
                             <td>{{ $feedback->created_at }}</td>
                             <td>

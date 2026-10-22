@@ -11,7 +11,7 @@
         </div>
         <div class="card-body bg-dark text-white">
             <div class="text-center">
-                <img src="{{ $account->photo() }}" height="100" width="100" alt="" class="rounded-circle m-2" style="border : 2px solid #FFF; object-fit: cover">
+                <img src="{{ $account->image ? asset('assets/images/clients/'.$account->image) : asset('assets/images/hillary.jpg') }}" height="100" width="100" alt="" class="rounded-circle m-2" style="border : 2px solid #FFF; object-fit: cover">
             </div>
             <table class="table table-bordered">
                 <tbody>
@@ -23,9 +23,9 @@
                     </tr>
                     <tr>
                         <td>Branch Name</td>
-                        <th>{{ $account->branch->branch_name }}</th>
+                        <th>{{ $account->branch_name }}</th>
                         <td>Branch Code</td>
-                        <th>{{ $account->branch->branch_code }}</th>
+                        <th>{{ $account->branch_code }}</th>
                     </tr>
                     <tr>
                         <td>Current Balance</td>

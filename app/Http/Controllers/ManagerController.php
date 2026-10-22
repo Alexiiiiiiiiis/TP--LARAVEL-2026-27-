@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
-use App\Models\Branch;
-use App\Models\Feedback;
-use App\Models\Staff;
+use Illuminate\Support\Facades\DB;
 
 // Pages de l'espace manager
 class ManagerController extends Controller
 {
-    // accueil : liste de tous les comptes clients
+    // accueil : liste de tous les comptes clients avec le nom de leur agence
     public function home()
     {
-        $accounts = Account::with('branch')->get();
+        $accounts = DB::table('accounts')
+            ->join('branches', 'accounts.branch_id', '=', 'branches.id')
+            ->select('accounts.*', 'branches.branch_name')
+            ->orderBy('accounts.id')
+            ->get();
 
         return view('manager.home')->with('accounts', $accounts);
     }
@@ -21,7 +22,7 @@ class ManagerController extends Controller
     // liste des caissiers (CRUD)
     public function staff()
     {
-        $cashiers = Staff::where('role', 'cashier')->get();
+        $cashiers = DB::table('staff')->where('role', 'cashier')->get();
 
         return view('manager.staff')->with('cashiers', $cashiers);
     }
@@ -32,17 +33,21 @@ class ManagerController extends Controller
         // numéro de compte unique généré automatiquement
         do {
             $accountNo = (string) random_int(1000000000, 9999999999);
-        } while (Account::where('account_no', $accountNo)->exists());
+        } while (DB::table('accounts')->where('account_no', $accountNo)->exists());
 
-        $branches = Branch::get();
+        $branches = DB::table('branches')->get();
 
         return view('manager.addaccount')->with('accountNo', $accountNo)->with('branches', $branches);
     }
 
-    // liste des feedbacks des clients
+    // liste des feedbacks avec le nom, le n° de compte et le contact du client
     public function feedback()
     {
-        $feedbacks = Feedback::with('account')->latest()->get();
+        $feedbacks = DB::table('feedbacks')
+            ->join('accounts', 'feedbacks.account_id', '=', 'accounts.id')
+            ->select('feedbacks.*', 'accounts.name', 'accounts.account_no', 'accounts.contact')
+            ->latest('feedbacks.created_at')
+            ->get();
 
         return view('manager.feedback')->with('feedbacks', $feedbacks);
     }

@@ -2,13 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Account;
-use App\Models\Branch;
-use App\Models\Feedback;
-use App\Models\Notice;
-use App\Models\Staff;
-use App\Models\Transaction;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 // Données de démonstration : 2 agences, 1 manager, 2 caissiers, 3 clients
@@ -21,15 +16,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Agences
-        $dgk = new Branch();
-        $dgk->branch_name = 'Dera Ghazi Khan';
-        $dgk->branch_code = '100101';
-        $dgk->save();
-
-        $lahore = new Branch();
-        $lahore->branch_name = 'Lahore';
-        $lahore->branch_code = '100102';
-        $lahore->save();
+        $dgk = $this->branch('Dera Ghazi Khan', '100101');
+        $lahore = $this->branch('Lahore', '100102');
 
         // Personnel
         $this->staff('manager@mcbbank.com', 'manager', 'manager');
@@ -42,56 +30,80 @@ class DatabaseSeeder extends Seeder
         $this->account('Sara Ahmed', 'sara@mcbbank.com', 'sara', '1513410837', 'current', 12121, $lahore, 'camala.jpg');
 
         // Une notification et un feedback pour la démo
-        $notice = new Notice();
-        $notice->account_id = $ali->id;
-        $notice->notice = 'Our privacy policy has been changed, please visit the nearest MCB branch for the new prospectus.';
-        $notice->save();
+        DB::table('notices')->insert([
+            'account_id' => $ali,
+            'notice' => 'Our privacy policy has been changed, please visit the nearest MCB branch for the new prospectus.',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
-        $feedback = new Feedback();
-        $feedback->account_id = $fayyaz->id;
-        $feedback->message = 'This is a testing message to the manager.';
-        $feedback->save();
+        DB::table('feedbacks')->insert([
+            'account_id' => $fayyaz,
+            'message' => 'This is a testing message to the manager.',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+
+    // crée une agence et renvoie son id
+    private function branch(string $name, string $code): int
+    {
+        return DB::table('branches')->insertGetId([
+            'branch_name' => $name,
+            'branch_code' => $code,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
     private function staff(string $email, string $password, string $role): void
     {
-        $staff = new Staff();
-        $staff->email = $email;
-        $staff->password = Hash::make($password);
-        $staff->role = $role;
-        $staff->save();
+        DB::table('staff')->insert([
+            'email' => $email,
+            'password' => Hash::make($password),
+            'role' => $role,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
-    private function account(string $name, string $email, string $password, string $accountNo, string $type, float $balance, Branch $branch, string $image): Account
+    // crée un compte client et renvoie son id
+    private function account(string $name, string $email, string $password, string $accountNo, string $type, float $balance, int $branchId, string $image): int
     {
+        $branchName = DB::table('branches')->where('id', $branchId)->value('branch_name');
+
         // copie la photo du template dans le dossier des photos clients
         $source = public_path('assets/images/'.$image);
         if (file_exists($source)) {
             copy($source, public_path('assets/images/clients/'.$image));
         }
 
-        $account = new Account();
-        $account->name = $name;
-        $account->cnic = '32403'.random_int(10000000, 99999999);
-        $account->account_no = $accountNo;
-        $account->account_type = $type;
-        $account->city = $branch->branch_name;
-        $account->address = 'Main Street, '.$branch->branch_name;
-        $account->email = $email;
-        $account->password = Hash::make($password);
-        $account->balance = $balance;
-        $account->source = 'Salary';
-        $account->contact = '0335691026'.random_int(0, 9);
-        $account->branch_id = $branch->id;
-        $account->image = file_exists($source) ? $image : null;
-        $account->save();
+        $accountId = DB::table('accounts')->insertGetId([
+            'name' => $name,
+            'cnic' => '32403'.random_int(10000000, 99999999),
+            'account_no' => $accountNo,
+            'account_type' => $type,
+            'city' => $branchName,
+            'address' => 'Main Street, '.$branchName,
+            'email' => $email,
+            'password' => Hash::make($password),
+            'balance' => $balance,
+            'source' => 'Salary',
+            'contact' => '0335691026'.random_int(0, 9),
+            'branch_id' => $branchId,
+            'image' => file_exists($source) ? $image : null,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
-        $transaction = new Transaction();
-        $transaction->account_id = $account->id;
-        $transaction->action = 'deposit';
-        $transaction->credit = $balance;
-        $transaction->save();
+        DB::table('transactions')->insert([
+            'account_id' => $accountId,
+            'action' => 'deposit',
+            'credit' => $balance,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
-        return $account;
+        return $accountId;
     }
 }

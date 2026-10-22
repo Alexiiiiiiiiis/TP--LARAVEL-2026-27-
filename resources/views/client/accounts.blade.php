@@ -12,7 +12,7 @@
         <div class="card-body">
             {{-- Photo du client --}}
             <div class="text-center">
-                <img src="{{ $account->photo() }}" height="150" width="150" alt="" class="rounded-circle m-2" style="border : 5px solid #555; object-fit: cover">
+                <img src="{{ $account->image ? asset('assets/images/clients/'.$account->image) : asset('assets/images/hillary.jpg') }}" height="150" width="150" alt="" class="rounded-circle m-2" style="border : 5px solid #555; object-fit: cover">
             </div>
             <table class="table table-striped table-dark w-75 mx-auto">
                 <thead>
@@ -28,11 +28,11 @@
                     </tr>
                     <tr>
                         <th scope="row">Branch</th>
-                        <td>{{ $account->branch->branch_name }}</td>
+                        <td>{{ $account->branch_name }}</td>
                     </tr>
                     <tr>
                         <th scope="row">Branch Code</th>
-                        <td>{{ $account->branch->branch_code }}</td>
+                        <td>{{ $account->branch_code }}</td>
                     </tr>
                     <tr>
                         <th scope="row">Account Type</th>

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
-use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -39,44 +37,52 @@ class AccountController extends Controller
         }
 
         DB::transaction(function () use ($request, $fileNameToStore) {
-            $account = new Account();
-            $account->name = $request->input('name');
-            $account->cnic = $request->input('cnic');
-            $account->account_no = $request->input('accountNo');
-            $account->account_type = $request->input('accountType');
-            $account->city = $request->input('city');
-            $account->address = $request->input('address');
-            $account->email = $request->input('email');
-            $account->password = Hash::make($request->input('password'));
-            $account->balance = $request->input('balance');
-            $account->source = $request->input('source');
-            $account->contact = $request->input('number');
-            $account->branch_id = $request->input('branch');
-            $account->image = $fileNameToStore;
-            $account->save();
+            $accountId = DB::table('accounts')->insertGetId([
+                'name' => $request->input('name'),
+                'cnic' => $request->input('cnic'),
+                'account_no' => $request->input('accountNo'),
+                'account_type' => $request->input('accountType'),
+                'city' => $request->input('city'),
+                'address' => $request->input('address'),
+                'email' => $request->input('email'),
+                'password' => Hash::make($request->input('password')),
+                'balance' => $request->input('balance'),
+                'source' => $request->input('source'),
+                'contact' => $request->input('number'),
+                'branch_id' => $request->input('branch'),
+                'image' => $fileNameToStore,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
             // le dépôt initial apparaît dans le relevé bancaire
-            $transaction = new Transaction();
-            $transaction->account_id = $account->id;
-            $transaction->action = 'deposit';
-            $transaction->credit = $account->balance;
-            $transaction->save();
+            DB::table('transactions')->insert([
+                'account_id' => $accountId,
+                'action' => 'deposit',
+                'credit' => $request->input('balance'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         });
 
         return redirect('/manager')->with('status', 'Le compte a été créé avec succès');
     }
 
-    // détails d'un client
+    // détails d'un client, avec le nom et le code de son agence
     public function showaccount($id)
     {
-        $account = Account::with('branch')->findOrFail($id);
+        $account = DB::table('accounts')
+            ->join('branches', 'accounts.branch_id', '=', 'branches.id')
+            ->select('accounts.*', 'branches.branch_name', 'branches.branch_code')
+            ->where('accounts.id', $id)
+            ->firstOrFail();
 
         return view('manager.show')->with('account', $account);
     }
 
     public function deleteaccount($id)
     {
-        $account = Account::findOrFail($id);
+        $account = DB::table('accounts')->where('id', $id)->firstOrFail();
 
         // suppression de la photo du client
         if ($account->image) {
@@ -84,7 +90,7 @@ class AccountController extends Controller
         }
 
         // les opérations, feedbacks et notifications sont supprimés en cascade
-        $account->delete();
+        DB::table('accounts')->where('id', $id)->delete();
 
         return back()->with('status', 'Le compte a été supprimé avec succès');
     }

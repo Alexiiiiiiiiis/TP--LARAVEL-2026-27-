@@ -1,6 +1,7 @@
 # MCB Bank – Arborescence de l'application
 
 Site de banque en ligne réalisé avec Laravel et Blade, à partir des templates fournis.
+L'accès à la base de données se fait avec le **Query Builder** de Laravel (`DB::table(...)`), sans modèles Eloquent.
 Trois espaces : **client**, **manager**, **caissier**.
 
 ## Lancer le projet
@@ -35,12 +36,7 @@ TP-Laravel-2026-27/
 │   │   └── Middleware/
 │   │       └── CheckRole.php              # protège chaque espace selon le rôle connecté
 │   └── Models/
-│       ├── Account.php                    # compte bancaire d'un client
-│       ├── Branch.php                     # agence
-│       ├── Staff.php                      # manager / caissier
-│       ├── Transaction.php                # opération (dépôt, retrait, virement)
-│       ├── Feedback.php                   # message d'un client
-│       └── Notice.php                     # notification de la banque
+│       └── User.php                       # modèle par défaut de Laravel (non utilisé)
 ├── bootstrap/
 │   └── app.php                            # enregistrement du middleware "role"
 ├── database/
