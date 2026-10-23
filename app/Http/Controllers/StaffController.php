@@ -8,7 +8,16 @@ use Illuminate\Support\Facades\Hash;
 
 // CRUD des caissiers (géré par le manager)
 class StaffController extends Controller
-{
+
+{   //@getcashier: Affiche la liste des caissiers (page /manager/staff)
+    public function index()
+    {
+        $cashiers = DB::table('staff')->where('role', 'cashier')->get();
+
+        return view('manager.staff')->with('cashiers', $cashiers);
+    }
+
+    //@postcashier: Crée un nouveau caissier dans la base de données
     public function savecashier(Request $request)
     {
         $request->validate([
@@ -27,6 +36,7 @@ class StaffController extends Controller
         return back()->with('status', 'Le caissier a été créé avec succès');
     }
 
+    //@putcashier: Met à jour les informations d'un caissier dans la base de données
     public function updatecashier($id, Request $request)
     {
         $cashier = DB::table('staff')->where('role', 'cashier')->where('id', $id)->firstOrFail();
@@ -51,6 +61,7 @@ class StaffController extends Controller
         return back()->with('status', 'Le caissier a été modifié avec succès');
     }
 
+    //@deletecashier: Supprime un caissier de la base de données
     public function deletecashier($id)
     {
         DB::table('staff')->where('role', 'cashier')->where('id', $id)->firstOrFail();

@@ -19,14 +19,6 @@ class ManagerController extends Controller
         return view('manager.home')->with('accounts', $accounts);
     }
 
-    // liste des caissiers (CRUD)
-    public function staff()
-    {
-        $cashiers = DB::table('staff')->where('role', 'cashier')->get();
-
-        return view('manager.staff')->with('cashiers', $cashiers);
-    }
-
     // formulaire de création d'un compte client
     public function addaccount()
     {

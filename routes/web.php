@@ -57,7 +57,6 @@ Route::middleware('role:client')->group(function () {
 Route::prefix('manager')->middleware('role:manager')->group(function () {
     Route::controller(ManagerController::class)->name('manager.')->group(function () {
         Route::get('/', 'home')->name('home');
-        Route::get('/staff', 'staff')->name('staff');
         Route::get('/addaccount', 'addaccount')->name('addaccount');
         Route::get('/feedback', 'feedback')->name('feedback');
     });
@@ -71,6 +70,7 @@ Route::prefix('manager')->middleware('role:manager')->group(function () {
 
     // Caissiers : CRUD
     Route::controller(StaffController::class)->group(function () {
+        Route::get('/staff', 'index')->name('manager.staff');
         Route::post('/savecashier', 'savecashier');
         Route::put('/updatecashier/{id}', 'updatecashier');
         Route::delete('/deletecashier/{id}', 'deletecashier');
