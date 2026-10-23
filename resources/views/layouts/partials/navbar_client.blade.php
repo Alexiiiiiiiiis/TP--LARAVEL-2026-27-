@@ -23,7 +23,10 @@
             <a href="{{ url('/accounts') }}" data-toggle="tooltip" title="Account Summary" class="btn btn-outline-primary mx-1"><i class="fa fa-book fa-fw"></i></a>
             <a href="{{ url('/notice') }}" data-toggle="tooltip" title="View Notice" class="btn btn-outline-primary mx-1"><i class="fa fa-envelope fa-fw"></i></a>
             <a href="{{ url('/feedback') }}" data-toggle="tooltip" title="Help?" class="btn btn-outline-info mx-1"><i class="fa fa-question fa-fw"></i></a>
-            <a href="{{ url('/logout') }}" data-toggle="tooltip" title="Logout" class="btn btn-outline-danger mx-1"><i class="fa fa-sign-out fa-fw"></i></a>
+            <form action="{{ url('/logout') }}" method="POST" class="d-inline">
+                @csrf
+                <button type="submit" data-toggle="tooltip" title="Logout" class="btn btn-outline-danger mx-1"><i class="fa fa-sign-out fa-fw"></i></button>
+            </form>
         </div>
     </div>
 </nav><br><br><br>

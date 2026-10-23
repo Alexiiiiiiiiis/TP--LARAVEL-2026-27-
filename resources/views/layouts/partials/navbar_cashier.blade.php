@@ -13,7 +13,10 @@
         </ul>
         <div class="form-inline my-2 my-lg-0">
             <span class="btn btn-outline-success">Welcome Cashier</span>
-            <a href="{{ url('/logout') }}" data-toggle="tooltip" title="Logout" class="btn btn-outline-danger mx-1"><i class="fa fa-sign-out fa-fw"></i></a>
+            <form action="{{ url('/logout') }}" method="POST" class="d-inline">
+                @csrf
+                <button type="submit" data-toggle="tooltip" title="Logout" class="btn btn-outline-danger mx-1"><i class="fa fa-sign-out fa-fw"></i></button>
+            </form>
         </div>
     </div>
 </nav><br><br><br>
